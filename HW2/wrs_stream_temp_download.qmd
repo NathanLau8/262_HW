@@ -46,3 +46,10 @@ ggplot(temp_data, aes(x=Date, y=temp_C, color=site_no)) +
 ```{r}
 write.csv(temp_data, file = here("HW2", "wrs_stream_temp.csv"))
 ```
+
+##Download data from CSV
+```{r}
+temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
+  select(-X, -NA.)
+```
+
