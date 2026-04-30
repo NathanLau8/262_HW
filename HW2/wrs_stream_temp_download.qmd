@@ -63,8 +63,10 @@ boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_C))+
        x = "Site", y = "Temperature (°C)")
 boxplot_1
 ```
+Figure 1. Stream temperature in °C is plotted for the Willamete River at three sites. 
 
 ##Create data frame of summary stats by site
+Summary stats calculated: mean, minimum, maximum, and standard deviation values by site.
 ```{r}
 wrs_summary_stats <- temp_data_download |>
   group_by(site_no) |>
