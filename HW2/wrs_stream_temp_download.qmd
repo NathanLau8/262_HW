@@ -43,19 +43,33 @@ ggplot(temp_data, aes(x=Date, y=temp_C, color=site_no)) +
   theme_minimal()
 ```
 
+##Create a CSV of the downloaded stream data
 ```{r}
 write.csv(temp_data, file = here("HW2", "wrs_stream_temp.csv"))
-```
-
-```{r}
-boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_c))+
-  geom_boxplot() +
-  labs(title = "Stream Temperature at Willamette River Sites",
-       x = "Site", y = "Temperature (°C)")
 ```
 
 ##Download data from CSV
 ```{r}
 temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
-  select(-X, -NA.)
+  select(-X, -NA.) |>
+  mutate(site_no = as.factor(site_no))
+```
+
+##Create a boxplot of stream temperature
+```{r}
+boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_C))+
+  geom_boxplot() +
+  labs(title = "Stream Temperature at Willamette River Sites",
+       x = "Site", y = "Temperature (°C)")
+boxplot_1
+```
+
+##Create data frame of summary stats by site
+```{r}
+wrs_summary_stats <- temp_data_download |>
+  group_by(site_no) |>
+  summarize(mean_temp = mean(temp_C), 
+            min_temp = min(temp_C), 
+            max_temp = max(temp_C),
+            std_temp = sd(temp_C))
 ```
