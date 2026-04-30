@@ -46,3 +46,10 @@ ggplot(temp_data, aes(x=Date, y=temp_C, color=site_no)) +
 ```{r}
 write.csv(temp_data, file = here("HW2", "wrs_stream_temp.csv"))
 ```
+
+```{r}
+boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_c))+
+  geom_boxplot() +
+  labs(title = "Stream Temperature at Willamette River Sites",
+       x = "Site", y = "Temperature (°C)")
+```
