@@ -51,8 +51,8 @@ write.csv(temp_data, file = here("HW2", "wrs_stream_temp.csv"))
 ##Download data from CSV
 ```{r}
 temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
-  select(-X, -NA.) |>
-  mutate(site_no = as.factor(site_no))
+  select(-X, -NA.) |> #removing extra columns
+  mutate(site_no = as.factor(site_no)) #site_no as factor for boxplots by site number
 ```
 
 ##Create a boxplot of stream temperature
@@ -74,4 +74,11 @@ wrs_summary_stats <- temp_data_download |>
             min_temp = min(temp_C), 
             max_temp = max(temp_C),
             std_temp = sd(temp_C))
+```
+
+##October temperature analysis
+```{r}
+october_temp <- subset(temp_data_download, month == "Oct") # Filter downloaded data for October
+october_model <- glm(temp_C ~ year*site_no, data = october_temp)
+summary(october_model)
 ```
