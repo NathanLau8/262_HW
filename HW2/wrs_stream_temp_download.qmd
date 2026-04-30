@@ -3,6 +3,7 @@ title: "WRS Stream Temp Downlaod from USGS-NWIS"
 format: html
 editor: visual
 author: "Nathan Lau & Hayden Waters"
+date: "4/30/26"
 ---
 
 ##Load packages
