@@ -53,3 +53,9 @@ boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_c))+
   labs(title = "Stream Temperature at Willamette River Sites",
        x = "Site", y = "Temperature (°C)")
 ```
+
+##Download data from CSV
+```{r}
+temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
+  select(-X, -NA.)
+```
