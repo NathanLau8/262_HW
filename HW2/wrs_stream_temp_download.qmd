@@ -1,0 +1,44 @@
+---
+title: "WRS Stream Temp Downlaod from USGS-NWIS"
+format: html
+editor: visual
+author: "Nathan Lau & Hayden Waters"
+---
+##Load packages
+
+```{r}
+#install.packages("dataRetrieval")
+library(dataRetrieval)
+library(tidyverse)
+library(here)
+```
+##Create a data frame
+
+Data frame for USGS stream temperature data from the Willamette River in Oregon. Data will be for three sites from 01/01/2010 to 12/31/2023.
+```{r}
+siteNumbers <- c("14211720", "14211010", "14166000")
+parameterCd <- "00010"  # water temperature
+startDate <- "2010-01-01"
+endDate <- "2023-12-31"
+
+temp_data <- readNWISdv(siteNumbers, parameterCd, startDate, endDate)
+```
+
+```{r}
+# rename columns for clarity
+colnames(temp_data) <- c("agency_cd", "site_no", "Date", "temp_C")
+# extract some date info for use later
+temp_data$month = month(temp_data$Date, label=TRUE)
+temp_data$year = year(temp_data$Date)
+
+# check by plotting
+ggplot(temp_data, aes(x=Date, y=temp_C, color=site_no)) +
+  geom_line() +
+  labs(title="Stream Temperature at Willamette River Sites",
+       x="Date", y="Temperature (°C)", color="Site Number") +
+  theme_minimal()
+```
+
+```{r}
+write.csv(temp_data, file = here("HW2", "wrs_stream_temp.csv"))
+```
