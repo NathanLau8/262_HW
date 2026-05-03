@@ -44,11 +44,13 @@ ggplot(temp_data, aes(x=Date, y=temp_C, color=site_no)) +
 ```
 
 ##Create a CSV of the downloaded stream data
+
 ```{r}
 write.csv(temp_data, file = here("HW2", "wrs_stream_temp.csv"))
 ```
 
 ##Download data from CSV
+
 ```{r}
 temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
   select(-X, -NA.) |>
@@ -56,6 +58,7 @@ temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
 ```
 
 ##Create a boxplot of stream temperature
+
 ```{r}
 boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_C))+
   geom_boxplot() +
@@ -63,10 +66,11 @@ boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_C))+
        x = "Site", y = "Temperature (°C)")
 boxplot_1
 ```
-Figure 1. Stream temperature in °C is plotted for the Willamete River at three sites. 
 
-##Create data frame of summary stats by site
-Summary stats calculated: mean, minimum, maximum, and standard deviation values by site.
+Figure 1. Stream temperature in °C is plotted for the Willamette River at three sites.
+
+##Create data frame of summary stats by site Summary stats calculated: mean, minimum, maximum, and standard deviation values by site.
+
 ```{r}
 wrs_summary_stats <- temp_data_download |>
   group_by(site_no) |>
@@ -75,3 +79,16 @@ wrs_summary_stats <- temp_data_download |>
             max_temp = max(temp_C),
             std_temp = sd(temp_C))
 ```
+
+##Calculate the trend in mean April stream temperatures for each site from year to year by fitting a Generalized Linear Model (GLM)
+
+```{r}
+# filter for April temperatures
+april_data <- subset(temp_data_download, month == "Apr")
+# fit a GLM model to see if there is a trend in April temperatures over time, separated by site
+april_model <- glm(temp_C ~ year*site_no, data = april_data)
+summary(april_model)
+```
+
+The GLM found an increase of 0.025963 degrees C/year for site 14166000, an increase of 0.023099 degrees C/year for site 14211010, and an increase of 0.032797 degrees C/year for site 14211720. 
+
