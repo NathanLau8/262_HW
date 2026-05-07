@@ -86,9 +86,9 @@ wrs_summary_stats <- temp_data_download |>
 # filter for April temperatures
 april_data <- subset(temp_data_download, month == "Apr")
 # fit a GLM model to see if there is a trend in April temperatures over time, separated by site
-april_model <- glm(temp_C ~ year*site_no, data = april_data)
+april_model <- lm(temp_C ~ year*site_no, data = april_data)
 summary(april_model)
 ```
 
-The GLM found an increase of 0.025963 degrees C/year for site 14166000, an increase of 0.023099 degrees C/year for site 14211010, and an increase of 0.032797 degrees C/year for site 14211720. 
+The LM model was statistically significant (p < 0.05) but has an r-squared of 0.32, meaning only 32% of the variance with site and year is explained by the model. While the linear found an increase of 0.025963 degrees C/year for site 14166000, an increase of 0.023099 degrees C/year for site 14211010, and an increase of 0.032797 degrees C/year for site 14211720, none of these trends are signficant (p > 0.05).
 
