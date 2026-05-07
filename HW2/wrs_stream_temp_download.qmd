@@ -25,7 +25,7 @@ parameterCd <- "00010"  # water temperature
 startDate <- "2010-01-01"
 endDate <- "2023-12-31"
 
-temp_data <- readNWISdv(siteNumbers, parameterCd, startDate, endDate)
+temp_data <- readNWISdv(siteNumbers, parameterCd, startDate, endDate) #create a data frame of stream data
 ```
 
 ```{r}
@@ -44,11 +44,13 @@ ggplot(temp_data, aes(x=Date, y=temp_C, color=site_no)) +
 ```
 
 ##Create a CSV of the downloaded stream data
+
 ```{r}
 write.csv(temp_data, file = here("HW2", "wrs_stream_temp.csv"))
 ```
 
 ##Download data from CSV
+
 ```{r}
 temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
   select(-X, -NA.) |> #removing extra columns
@@ -56,6 +58,7 @@ temp_data_download <- read.csv(here("HW2", "wrs_stream_temp.csv"))|>
 ```
 
 ##Create a boxplot of stream temperature
+
 ```{r}
 boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_C))+
   geom_boxplot() +
@@ -63,11 +66,13 @@ boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_C))+
        x = "Site", y = "Temperature (°C)")
 boxplot_1
 ```
-Figure 1. Stream temperature in °C is plotted for the Willamete River at three sites. 
 
-##Create data frame of summary stats by site
-Summary stats calculated: mean, minimum, maximum, and standard deviation values by site.
+Figure 1. Stream temperature in °C is plotted for the Willamete River at three sites.
+
+##Create data frame of summary stats by site Summary
+
 ```{r}
+# Calculate stats: mean, minimum, maximum, and standard deviation by site
 wrs_summary_stats <- temp_data_download |>
   group_by(site_no) |>
   summarize(mean_temp = mean(temp_C), 
@@ -77,8 +82,17 @@ wrs_summary_stats <- temp_data_download |>
 ```
 
 ##October temperature analysis
+
 ```{r}
 october_temp <- subset(temp_data_download, month == "Oct") # Filter downloaded data for October
-october_model <- glm(temp_C ~ year*site_no, data = october_temp)
+october_model <- lm(temp_C ~ year * site_no, data = october_temp) #Linear model
 summary(october_model)
+
+boxplot_2 <- ggplot(october_temp, aes(site_no, temp_C))+
+  geom_boxplot() +
+  labs(title = "October Stream Temperature at Willamette River Sites",
+       x = "Site", y = "Temperature (°C)")
+boxplot_2
 ```
+
+The linear model is well-fitted to the October data with a p-value < 0.05. The r-squared of 0.26, indicates that 26% of the temperature variance is explained by the model. The year slope estimate is not significant (p > 0.05), meaning the change in temperature over time is not different from random chance. The water temperatures between the three sites were not significantly different. The same is true when the year-site interaction is included.
