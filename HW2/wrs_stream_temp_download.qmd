@@ -88,11 +88,6 @@ october_temp <- subset(temp_data_download, month == "Oct") # Filter downloaded d
 october_model <- lm(temp_C ~ year * site_no, data = october_temp) #Linear model
 summary(october_model)
 
-boxplot_2 <- ggplot(october_temp, aes(site_no, temp_C))+
-  geom_boxplot() +
-  labs(title = "October Stream Temperature at Willamette River Sites",
-       x = "Site", y = "Temperature (°C)")
-boxplot_2
 ```
 
-The linear model is well-fitted to the October data with a p-value < 0.05. The r-squared of 0.26, indicates that 26% of the temperature variance is explained by the model. The year slope estimate is not significant (p > 0.05), meaning the change in temperature over time is not different from random chance. The water temperatures between the three sites were not significantly different. The same is true when the year-site interaction is included.
+The October linear model is significant with a p-value < 0.05. However, the r-squared of 0.26, indicates that only 26% of the year and site temperature variance is explained by the model. The year slope estimate is not significant (p > 0.05), indicating that there is no temperature trend at site 14211720. The water temperatures between the three sites were not significantly different. The same is true with the other two site, with no significance found.
