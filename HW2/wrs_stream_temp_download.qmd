@@ -13,6 +13,7 @@ date: "4/30/26"
 library(dataRetrieval)
 library(tidyverse)
 library(here)
+library(patchwork)
 ```
 
 ##Create a data frame
@@ -25,7 +26,8 @@ parameterCd <- "00010"  # water temperature
 startDate <- "2010-01-01"
 endDate <- "2023-12-31"
 
-temp_data <- readNWISdv(siteNumbers, parameterCd, startDate, endDate) #create a data frame of stream data
+#create a data frame of stream data
+temp_data <- readNWISdv(siteNumbers, parameterCd, startDate, endDate) 
 ```
 
 ```{r}
@@ -67,12 +69,9 @@ boxplot_1 <- ggplot(temp_data_download, aes(site_no, temp_C))+
 boxplot_1
 ```
 
-
 Figure 1. Stream temperature in °C is plotted for the Willamette River at three sites.
 
 ##Create data frame of summary stats by site Summary stats calculated: mean, minimum, maximum, and standard deviation values by site.
-
-
 
 ```{r}
 # Calculate stats: mean, minimum, maximum, and standard deviation by site
@@ -84,7 +83,6 @@ wrs_summary_stats <- temp_data_download |>
             std_temp = sd(temp_C))
 ```
 
-
 ##Calculate the trend in mean April stream temperatures for each site from year to year by fitting a Generalized Linear Model (GLM)
 
 ```{r}
@@ -95,7 +93,7 @@ april_model <- lm(temp_C ~ year*site_no, data = april_data)
 summary(april_model)
 ```
 
-The LM model was statistically significant (p < 0.05) but has an r-squared of 0.32, meaning only 32% of the variance with site and year is explained by the model. While the linear found an increase of 0.025963 degrees C/year for site 14166000, an increase of 0.023099 degrees C/year for site 14211010, and an increase of 0.032797 degrees C/year for site 14211720, none of these trends are signficant (p > 0.05).
+The linear model was statistically significant (p \< 0.05) but has an r-squared of 0.32, meaning only 32% of the variance with site and year is explained by the model. While the linear found an increase of 0.025963 degrees C/year for site 14166000, an increase of 0.023099 degrees C/year for site 14211010, and an increase of 0.032797 degrees C/year for site 14211720, none of these trends are signficant (p \> 0.05).
 
 ##October temperature analysis
 
@@ -106,5 +104,22 @@ summary(october_model)
 
 ```
 
-The October linear model is significant with a p-value < 0.05. However, the r-squared of 0.26, indicates that only 26% of the year and site temperature variance is explained by the model. The year slope estimate is not significant (p > 0.05), indicating that there is no temperature trend at site 14211720. The water temperatures between the three sites were not significantly different. The same is true with the other two site, with no significance found.
+The October linear model is significant with a p-value \< 0.05. However, the r-squared of 0.26, indicates that only 26% of the year and site temperature variance is explained by the model. The year slope estimate is not significant (p \> 0.05), indicating that there is no temperature trend at site 14211720. The water temperatures between the three sites were not significantly different. The same is true with the other two site, with no significance found.
 
+##Plotting temperature at each site using violin plot
+
+```{r}
+violin_plot_apr <- ggplot(april_data, aes(factor(site_no), temp_C)) +
+  geom_violin() +
+  ylim(6,18) +
+  labs(x = "", y = "April Temp (°C)", title = "Temperature by Site")
+
+violin_plot_oct <- ggplot(october_temp, aes(factor(site_no), temp_C)) +
+  geom_violin() +
+  ylim(6,18) +
+  labs(x = "Site Number", y = "October Temp (°C)")
+
+violin_plot_apr / violin_plot_oct
+```
+
+Overall, temperature across the three sites does not show significant differences in the two months we analyzed, April and October. That means that the month did not influence some sites' stream temperatures more than the others. Including a site-year interaction did not yield significant results across sites, meaning the sites are not warming at different rates from one another. What this may indicate from this limited analysis is that the stream sites measured are similar, in that they experience monthly and yearly changes in temperature in-line with one another.
